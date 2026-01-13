@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light" style=""><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZONE指圧法 動画再生リスト</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;family=Shippori+Mincho:wght@500;700&amp;display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+
+    <style>
+      :root {
+        --bg-color: #c8f4dc; /* ユーザー指定の背景色 */
+        --header-bg: #00897b; /* 背景と区別できる濃いめのティールグリーン */
+        --text-color: #1b3a20;
+        --card-bg: #ffffff;
+        --accent-color: #00e676;
+        --hover-bg: #e0f2f1;
+
+        --badge-soron: #2196f3;
+        --badge-setsuzoku: #009688;
+        --badge-kobore: #ff9800;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        font-family: 'Noto Sans JP', sans-serif;
+        color: var(--text-color);
+        min-height: 100vh;
+      }
+
+      /* ヘッダー */
+      .header {
+        background-color: var(--header-bg);
+        color: white;
+        padding: 24px 20px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-family: 'Shippori Mincho', serif;
+        font-size: 1.5rem;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+      }
+
+      /* メインコンテンツ */
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px 16px;
+      }
+
+      /* リストスタイル */
+      .video-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* 動画カード（共通） */
+      .video-item {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid transparent;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 公開済みカードのスタイル */
+      .video-item.published {
+        border-left-color: var(--accent-color);
+        cursor: pointer;
+      }
+
+      .video-item.published:hover {
+        transform: translateX(6px);
+        background-color: var(--hover-bg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 準備中カードのスタイル */
+      .video-item.pending {
+        border-left-color: #ccc;
+        opacity: 0.7;
+        background-color: rgba(255, 255, 255, 0.6);
+        cursor: default;
+      }
+
+      /* 番号バッジ */
+      .number {
+        font-family: 'Shippori Mincho', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        color: #555;
+        flex-shrink: 0;
+      }
+
+      .published .number {
+        background-color: var(--accent-color);
+        color: #fff;
+      }
+
+      /* コンテンツ部分 */
+      .content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .category-badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 500;
+      }
+
+      .badge-soron {
+        background-color: var(--badge-soron);
+      }
+      .badge-setsuzoku {
+        background-color: var(--badge-setsuzoku);
+      }
+      .badge-kobore {
+        background-color: var(--badge-kobore);
+      }
+
+      .title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .pending .title {
+        color: #777;
+        font-weight: 500;
+      }
+
+      /* 右側のアイコン */
+      .status-icon {
+        font-size: 1.2rem;
+        color: #ccc;
+        flex-shrink: 0;
+      }
+
+      .published .status-icon {
+        color: var(--accent-color);
+      }
+
+      /* レスポンシブ調整 */
+      @media (max-width: 480px) {
+        .header h1 {
+          font-size: 1.25rem;
+        }
+        .video-item {
+          padding: 12px;
+          gap: 12px;
+        }
+        .number {
+          font-size: 1rem;
+          min-width: 28px;
+          height: 28px;
+        }
+        .title {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body style="">
+    <header class="header">
+      <h1>ZONE指圧法 動画再生リスト</h1>
+    </header>
+
+    <div class="container">
+      <div class="video-list">
+        <!-- 総論1 -->
+        <a href="https://youtu.be/3oCMH_0X7nI" class="video-item published" target="_blank">
+          <div class="number">1</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">ZONE指圧法の大枠</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論2 -->
+        <a href="https://youtu.be/0FOZ0RLHG-Q" class="video-item published" target="_blank">
+          <div class="number">2</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">陰陽虚実の補足</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論3 -->
+        <a href="https://youtu.be/XIUuiY-AaWA" class="video-item published" target="_blank">
+          <div class="number">3</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">ツボの取り方、単位</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論4 -->
+        <a href="https://youtu.be/3JFOswBgoks" class="video-item published" target="_blank">
+          <div class="number">4</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">全経絡の流れ</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論5 -->
+        <a href="https://youtu.be/JImCuASDp-0" class="video-item published" target="_blank">
+          <div class="number">5</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">エリアの話</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論6 -->
+        <a href="https://youtu.be/VFwyCq5UxlM" class="video-item published" target="_blank">
+          <div class="number">6</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">絡穴取穴手</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論7 -->
+        <a href="https://youtu.be/Zon4k1y0c4k" class="video-item published" target="_blank">
+          <div class="number">7</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">絡穴取穴足</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論8 -->
+        <a href="https://youtu.be/FtKmoSFzXk0" class="video-item published" target="_blank">
+          <div class="number">8</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">dのエリアの取穴</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論9 -->
+        <a href="https://youtu.be/MZAJTSJky0U" class="video-item published" target="_blank">
+          <div class="number">9</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">ZONE指圧法のやり方</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論10 -->
+        <a href="https://youtu.be/YZfYjrCatZg" class="video-item published" target="_blank">
+          <div class="number">10</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">取穴エリア手・陰経</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論11 -->
+        <a href="https://youtu.be/17S0OYCg5Qc" class="video-item published" target="_blank">
+          <div class="number">11</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">取穴エリア手・陽経</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論12 -->
+        <a href="https://youtu.be/800m4jcDF70" class="video-item published" target="_blank">
+          <div class="number">12</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">取穴エリア足・陰経</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論13 -->
+        <a href="https://youtu.be/81IBnDVytBc" class="video-item published" target="_blank">
+          <div class="number">13</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">取穴エリア足・陽経</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論14 -->
+        <a href="https://youtu.be/H0fGbUazU2Y" class="video-item published" target="_blank">
+          <div class="number">14</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">左右の決定</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論15 -->
+        <a href="https://youtu.be/k53OE-z4rAE" class="video-item published" target="_blank">
+          <div class="number">15</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">dの左右の決定</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論16 -->
+        <a href="https://youtu.be/y68osW6OJQQ" class="video-item published" target="_blank">
+          <div class="number">16</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">よくある例え【道路】</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 総論17 -->
+        <a href="https://youtu.be/ELTFp8pjH4g" class="video-item published" target="_blank">
+          <div class="number">17</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-soron">総論</span>
+            </div>
+            <div class="title">指圧法共通項目おさらい・レシピの見方</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 接続1 -->
+        <a href="https://youtu.be/5KYHNhyCfLI" class="video-item published" target="_blank">
+          <div class="number">18</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-setsuzoku">接続</span>
+            </div>
+            <div class="title">接続・連接という技</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 接続2 -->
+        <a href="https://youtu.be/Wmv5q_Rc4dg" class="video-item published" target="_blank">
+          <div class="number">19</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-setsuzoku">接続</span>
+            </div>
+            <div class="title">接続やってみよう(レシピ)</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- 接続3 -->
+        <a href="https://youtu.be/6SJToQ4QWIM" class="video-item published" target="_blank">
+          <div class="number">20</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-setsuzoku">接続</span>
+            </div>
+            <div class="title">接続やってみよう(実技)</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+
+        <!-- こぼれ話1 -->
+        <a href="https://youtu.be/WUoG-xN5x2s" class="video-item published" target="_blank">
+          <div class="number">21</div>
+          <div class="content">
+            <div class="meta">
+              <span class="category-badge badge-kobore">こぼれ話</span>
+            </div>
+            <div class="title">気の話【放電】</div>
+          </div>
+          <div class="status-icon"><i class="fa-solid fa-circle-play"></i></div>
+        </a>
+      </div>
+    </div>
+  
+
+</body></html>
